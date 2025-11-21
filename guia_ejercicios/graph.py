@@ -6,6 +6,53 @@ from queue_ import Queue
 from stack import Stack
 
 class Graph(List):
+    #ejercicio 5
+    def eliminar_arista(self, vertice_origen: Any, vertice_destino: Any) -> Optional[Any]:
+        """
+        Elimina la arista entre vertice_origen y vertice_destino.
+        Retorna el PESO de la arista eliminada, o None si no se encontró.
+        """
+        pos_origen = self.search(vertice_origen, 'value')
+        if pos_origen is not None:
+            nodo_origen = self[pos_origen]
+            
+
+            arista_eliminada = nodo_origen.edges.delete_value(vertice_destino, 'value')
+
+            if arista_eliminada is not None:
+                peso = arista_eliminada.weight
+                if self.is_directed:
+                    pos_destino = self.search(vertice_destino, 'value')
+                    if pos_destino is not None:
+                        nodo_destino = self[pos_destino]
+                        nodo_destino.edges.delete_value(vertice_origen, 'value')
+                
+                return peso
+        return None
+    
+    #ejercicio 14
+    def existe_paso(self, vertice_origen: Any, vertice_destino: Any) -> bool:
+        """
+        Devuelve True si es posible ir desde el vértice origen hasta el vértice destino.
+        Caso contrario retorna False.
+        """
+        def __buscar_profundidad(grafo, actual, objetivo):
+            pos_actual = grafo.search(actual, 'value')
+            
+            if pos_actual is not None:
+                nodo_actual = grafo[pos_actual]
+                if not nodo_actual.visited:
+                    nodo_actual.visited = True
+                    if nodo_actual.value == objetivo:
+                        return True
+                    for arista in nodo_actual.edges:
+                        if __buscar_profundidad(grafo, arista.value, objetivo):
+                            return True
+            return False
+
+        self.mark_as_unvisited()
+        
+        return __buscar_profundidad(self, vertice_origen, vertice_destino)
 
     class __nodeVertex:
 
